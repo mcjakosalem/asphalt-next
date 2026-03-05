@@ -5,6 +5,8 @@ import bcrypt from "bcryptjs";
 export async function POST(req: Request) {
   try {
     const { name, email, password } = await req.json();
+    const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+    const isAnAdmin = adminEmail ? email.trim().toLowerCase() === adminEmail : false;
 
     if (!name || !email || !password) {
       return NextResponse.json(
@@ -31,6 +33,12 @@ export async function POST(req: Request) {
         name,
         email,
         password: hashedPassword,
+        isAnAdmin,
+      } as {
+        name: string;
+        email: string;
+        password: string;
+        isAnAdmin: boolean;
       },
     });
 
@@ -40,6 +48,7 @@ export async function POST(req: Request) {
         message: "User registered successfully!",
         name: user.name,
         userName: user.name,
+        isAnAdmin,
       },
       { status: 200 },
     );

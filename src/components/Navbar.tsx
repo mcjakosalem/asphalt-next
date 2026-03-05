@@ -11,9 +11,17 @@ const Navbar: React.FC = () => {
     const storedName = (typeof window !== 'undefined' ? localStorage.getItem("userName") : null);
     return token && storedName ? storedName : null;
   });
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // Ignore network failures and still clear local state.
+    }
+
     if (typeof window !== 'undefined') localStorage.removeItem("token");
     if (typeof window !== 'undefined') localStorage.removeItem("userName");
+    if (typeof window !== 'undefined') localStorage.removeItem("isAnAdmin");
+    if (typeof window !== 'undefined') localStorage.removeItem("userEmail");
     setUserName(null);
     router.push("/");
   };
@@ -83,7 +91,7 @@ const Navbar: React.FC = () => {
             </span>{" "}
             <button
               onClick={handleLogout}
-              className="bg-orange-400 hover:bg-orange-500 px-7 py-2 rounded-lg text-sm font-bold text-white transition"
+              className="bg-orange-400 hover:bg-orange-500 px-7 py-2 rounded-lg text-sm font-bold text-white transition cursor-pointer"
             >
               {" "}
               Log Out{" "}
@@ -92,7 +100,7 @@ const Navbar: React.FC = () => {
         ) : (
           <Link href="/login">
             {" "}
-            <button className="bg-[#4a4a4a] hover:bg-[#5a5a5a] px-7 py-2 rounded-lg text-sm font-bold text-white transition">
+            <button className="bg-[#4a4a4a] hover:bg-[#5a5a5a] px-7 py-2 rounded-lg text-sm font-bold text-white transition cursor-pointer">
               {" "}
               Sign In{" "}
             </button>{" "}

@@ -33,15 +33,26 @@ export async function POST(req: Request) {
       );
     }
 
-    return NextResponse.json(
+    const response = NextResponse.json(
       {
         token: "dummy-jwt-token",
         message: "Login successful!",
         name: user.name,
         userName: user.name,
+        email: user.email,
+        isAnAdmin: (user as { isAnAdmin?: boolean }).isAnAdmin ?? false,
       },
       { status: 200 },
     );
+
+    response.cookies.set("session_email", user.email, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+    });
+
+    return response;
   } catch (error) {
     console.error("Login error:", error);
     return NextResponse.json(

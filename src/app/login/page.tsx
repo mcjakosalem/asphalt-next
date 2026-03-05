@@ -29,7 +29,13 @@ const Login: React.FC = () => {
       if (resolvedName) {
         if (typeof window !== 'undefined') localStorage.setItem("userName", resolvedName);
       }
-      router.push("/");
+      if (typeof window !== 'undefined') {
+        if (data.email) {
+          localStorage.setItem("userEmail", data.email);
+        }
+        localStorage.setItem("isAnAdmin", data.isAnAdmin ? "true" : "false");
+      }
+      router.push(data.isAnAdmin ? "/admin" : "/");
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -120,7 +126,7 @@ const Login: React.FC = () => {
             </form>{" "}
             <p className="text-center mt-8 text-gray-600 font-medium">
               {" "}
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link
                 href="/register"
                 className="text-black font-bold hover:underline"
